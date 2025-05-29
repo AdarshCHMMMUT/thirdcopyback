@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to InstaCopy</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fafafa;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 40px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo img {
+      width: 100px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    p {
+      font-size: 16px;
+      color: #555;
+    }
+    .btn {
+      display: block;
+      margin: 30px auto;
+      width: max-content;
+      background-color: #3897f0;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Logo">
+    </div>
+    <h1>Welcome, {{name}}!</h1>
+    <p>Thank you for joining InstaCopy. Your account has been created with the email <strong>{{email}}</strong>.</p>
+    <a href="https://instacopy.example.com" class="btn">Get Started</a>
+    <p style="font-size:12px; text-align:center; color:#999;">If you did not sign up for this account, please ignore this email.</p>
+  </div>
+</body>
+</html>
