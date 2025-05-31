@@ -64,9 +64,9 @@ export const getcategory = async(req,res)=>
   try{
       
     
-      const items = await Category.find();
-      if(!items)return res.json({success:false, message: 'No items found in this category'});
-      return res.json({success:true, message: 'Items fetched successfully', item: items});
+      const categories = await Category.find();
+       if(!categories)return res.json({success:false, message: 'No categories found'});
+      return res.json({success:true, message: 'Categories fetched successfully', categories});
   }
   catch(error)
   {

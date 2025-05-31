@@ -9,6 +9,6 @@ const categorySchema = new mongoose.Schema({
   timestamps: true // This automatically adds createdAt and updatedAt
 });
 
-const Category = mongoose.model('Category', categorySchema);
+const Category = mongoose.model('categories', categorySchema);
 
 export default Category;
