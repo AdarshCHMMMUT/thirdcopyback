@@ -2,6 +2,11 @@ import User from "../models/usermodel.js";
 import itemmodel from "../models/itemmodel.js";
 import jwt from "jsonwebtoken"
 import Category from "../models/categorymodel.js";
+import {v4 as uuidv4} from 'uuid';
+import Stripe from 'stripe';
+
+// const stripe = new Stripe('');
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const getUserData = async(req,res) =>
 {
   try{
@@ -48,9 +53,13 @@ export const getprofile = async(req,res)=>
 export const getitems = async(req,res)=>
 {
   try{
-      const items = await itemmodel.find();
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 16;
+      const skip = (page - 1) * limit;
+      const items = await itemmodel.find().skip(skip).limit(limit).sort({createdAt: -1});
+      const totalItems = await itemmodel.countDocuments();
       if(!items)return res.json({success:false, message: 'No items found'});
-      return res.json({success:true, message: 'Items fetched successfully', item: items});
+      return res.json({success:true,items, currentPage: page, totalPages: Math.ceil(totalItems / limit)});
   }
   catch(error)
   {
@@ -64,13 +73,36 @@ export const getcategory = async(req,res)=>
   try{
       
     
-      const items = await Category.find();
-      if(!items)return res.json({success:false, message: 'No items found in this category'});
-      return res.json({success:true, message: 'Items fetched successfully', item: items});
+      const categories = await Category.find();
+       if(!categories)return res.json({success:false, message: 'No categories found'});
+      return res.json({success:true, message: 'Categories fetched successfully', categories});
   }
   catch(error)
   {
     return res.json({success:false, message: error.message});
      
   }
+}
+export const payment = async (req, res) => {
+    const {product,token} = req.body;
+    const idempotencyKey = uuidv4(); 
+    
+    return stripe.customers.create({
+      email: token.email,
+      source: token.id
+    }).then(customer => {
+      stripe.charges.create({
+        amount: product.price * 100,
+        currency: 'usd',
+        customer: customer.id,
+        receipt_email: token.email,
+        description: `Purchase of ${product.name}`,
+        shipping: {
+          name: token.card.name,
+          address: {
+            country: token.card.address_country
+          }
+        }
+      }, { idempotencyKey });
+    }).then(result => res.status(200).json(result)).catch(err => console.log(err));
 }
