@@ -1,10 +1,10 @@
-import User from "../models/usermodel.js";
+ 
 import itemmodel from "../models/itemmodel.js";
 import jwt from "jsonwebtoken"
 import Category from "../models/categorymodel.js";
 import {v4 as uuidv4} from 'uuid';
 import Stripe from 'stripe';
-
+import User from "../models/usermodel.js";
 // const stripe = new Stripe('');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const getUserData = async(req,res) =>
@@ -39,13 +39,13 @@ export const getprofile = async(req,res)=>
     }
     const decoded = jwt.decode(token);
     const userId = decoded.id;
-    const user  = await userModel.findById(userId);
+    const user  = await User.findById(userId);
     return res.json({success:true, message: 'kaam ho gaya',user});
 
   }
   catch(error)
   {
-    return res.json({success:false, message: 'caught error'});
+    return res.json({success:false, message: 'caught error', error: error.message});
      
   }
 }

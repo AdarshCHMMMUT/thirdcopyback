@@ -12,9 +12,9 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: "http://localhost:3000",
-  credentials:true}
-)) 
+  origin: ["http://localhost:3000", "https://thirdcopyback.vercel.app"],
+  credentials: true,
+}));
 // as wee need cookies as tokens
 // API Endpoints
 app.get("/", (req, res) => {
