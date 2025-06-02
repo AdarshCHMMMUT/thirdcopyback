@@ -5,7 +5,7 @@ import { getcategory, getitems, getOrders, getprofile, getUserData, payment } fr
 const userRouter = express.Router();
 
 userRouter.get('/data', userAuth, getUserData)
-userRouter.get('/profile',getprofile)
+userRouter.post('/profile',getprofile)
 userRouter.get('/items', getitems)
 userRouter.get('/category', getcategory)
 userRouter.post('/payment',payment)
