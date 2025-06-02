@@ -55,7 +55,7 @@ export const getitems = async(req,res)=>
 {
   try{
       const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 16;
+      const limit = parseInt(req.query.limit);
       const skip = (page - 1) * limit;
       const items = await itemmodel.find().skip(skip).limit(limit).sort({createdAt: -1});
       const totalItems = await itemmodel.countDocuments();
