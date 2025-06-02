@@ -8,6 +8,7 @@ const connectDB = async () => {
         await mongoose.connect(`${process.env.MONGO_URI}/instacopy`, {
             serverSelectionTimeoutMS: 10000,
             connectTimeoutMS: 10000,
+            maxPoolSize: 10,
         });
     
         console.log("✅ Database Connected!");
@@ -19,3 +20,5 @@ const connectDB = async () => {
 };
 
 export default connectDB;
+
+

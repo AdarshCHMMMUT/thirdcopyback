@@ -5,6 +5,7 @@ import Category from "../models/categorymodel.js";
 import {v4 as uuidv4} from 'uuid';
 import Stripe from 'stripe';
 import User from "../models/usermodel.js";
+import Order from "../models/ordermodel.js";
 // const stripe = new Stripe('');
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const getUserData = async(req,res) =>
@@ -83,26 +84,67 @@ export const getcategory = async(req,res)=>
      
   }
 }
+ 
+
 export const payment = async (req, res) => {
-    const {product,token} = req.body;
-    const idempotencyKey = uuidv4(); 
-    
-    return stripe.customers.create({
+  const { product, token, userId } = req.body;
+  const idempotencyKey = uuidv4();
+
+  try {
+    const customer = await stripe.customers.create({
       email: token.email,
-      source: token.id
-    }).then(customer => {
-      stripe.charges.create({
-        amount: product.price * 100,
-        currency: 'usd',
-        customer: customer.id,
-        receipt_email: token.email,
-        description: `Purchase of ${product.name}`,
-        shipping: {
-          name: token.card.name,
-          address: {
-            country: token.card.address_country
-          }
-        }
-      }, { idempotencyKey });
-    }).then(result => res.status(200).json(result)).catch(err => console.log(err));
-}
+      source: token.id,
+    });
+
+    const charge = await stripe.charges.create({
+      amount: product.price * 100,
+      currency: 'usd',
+      customer: customer.id,
+      receipt_email: token.email,
+      description: `Purchase of ${product.name}`,
+      shipping: {
+        name: token.card.name,
+        address: {
+          country: token.card.address_country,
+        },
+      },
+    }, { idempotencyKey });
+
+    const order = new Order({
+      user: userId,
+      product: {
+        name: product.name,
+        price: product.price,
+        quantity: product.quantity || 1, // default to 1 if not sent
+      },
+      amount: charge.amount / 100, // convert cents to dollars
+      currency: charge.currency,
+      paymentId: charge.id,
+      receiptEmail: charge.receipt_email,
+      shipping: {
+        name: charge.shipping.name,
+        country: charge.shipping.address.country,
+      },
+      status: charge.status,
+    });
+
+    await order.save();
+
+    res.status(200).json({ charge, message: "Payment successful and order stored." });
+  } catch (err) {
+    console.error("Payment error: ", err);
+    res.status(500).json({ error: "Payment failed." ,message: err.message });
+  }
+};
+
+
+
+export const getOrders = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const orders = await Order.find({ user: userId }).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, orders });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch orders.", error: error.message });
+  }
+};
