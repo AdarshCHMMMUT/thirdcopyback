@@ -12,7 +12,7 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ["http://localhost:3000", "https://3rdcopy.netlify.app/"],
+  origin: ["http://localhost:3000", "https://3rdcopy.netlify.app"],
   credentials: true,
 }));
 // as wee need cookies as tokens
