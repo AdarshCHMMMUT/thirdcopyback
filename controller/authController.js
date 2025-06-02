@@ -77,7 +77,7 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000
     });    
 
-    return res.json({ success: true ,userData});
+    return res.json({ success: true ,user});
   }
   catch (error) {
     return res.json({ success: false, message: error.message })
