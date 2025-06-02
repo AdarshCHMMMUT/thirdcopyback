@@ -17,6 +17,9 @@ const orderSchema = new mongoose.Schema({
     country: { type: String, required: true },
   },
   status: { type: String, required: true },
+},
+{
+  timestamps: true,
 });
 
 const Order = mongoose.model('Order', orderSchema);
