@@ -34,12 +34,9 @@ export const getUserData = async(req,res) =>
 export const getprofile = async(req,res)=>
 {
   try{
-    const {token}  = req.cookies;
-    if (!token) {
-      return res.status(401).json({ success: false, message: "No token provided" });
-    }
-    const decoded = jwt.decode(token);
-    const userId = decoded.id;
+    
+    const userId = req.body.userId;
+    if(!userId) return res.json({success:false, message: 'User ID is required'});
     const user  = await User.findById(userId);
     return res.json({success:true, message: 'kaam ho gaya',user});
 
